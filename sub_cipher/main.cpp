@@ -4,6 +4,10 @@
 #include <string>
 #include <fstream>
 #include <streambuf>
+#include <algorithm>
+#include <random>
+#include <locale>
+
 namespace pystring {
 
     std::string translate( const std::string & str, const std::string & table, const std::string & deletechars ="")
@@ -63,8 +67,24 @@ std::string maketrans(std::map<char, char> trans)
     }
     return std::string(t1data, 256);
 }
+
+std::string maketrans(std::string key)
+{
+    
+    char t1data[256];
+    std::iota(std::begin(t1data), std::end(t1data), 0);
+    size_t i = 'A';
+    size_t d = 'a' - 'A';
+    auto k = std::begin(key);
+    for(; k != std::end(key); ++i, ++k)
+    {
+        t1data[i] = *k;
+        t1data[i+d] = std::tolower(*k);
+    }
+    return std::string(t1data, 256);
 }
 
+}
 
 
 int main(int argc, const char *argv[])
@@ -72,36 +92,44 @@ int main(int argc, const char *argv[])
     std::ifstream t("../1.4.txt");
     std::string cipher_text((std::istreambuf_iterator<char>(t)),
             std::istreambuf_iterator<char>());
-    std::map<char, char> m = {
-        {'A', 'o'},
-        {'B', 'o'},
-        {'C', 'o'},
-        {'D', 'o'},
-        {'E', 'o'},
-        {'F', 'o'},
-        {'G', 'o'},
-        {'H', 'o'},
-        {'I', 'o'},
-        {'J', 'o'},
-        {'K', 'o'},
-        {'L', 'o'},
-        {'M', 'o'},
-        {'N', 'o'},
-        {'O', 'o'},
-        {'P', 'o'},
-        {'Q', 'o'},
-        {'R', 'o'},
-        {'S', 'o'},
-        {'T', 'o'},
-        {'U', 'o'},
-        {'V', 'o'},
-        {'W', 'o'},
-        {'X', 'o'},
-        {'Y', 'o'},
-        {'Z', 'o'},
+    std::random_device rd;
+    std::mt19937 g(rd());
+    std::string key("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+    std::shuffle(std::begin(key), std::end(key), g);
+    std::cout << pystring::maketrans(key);
+
+#if 0
+    std::map<char, char> m = {{'A', 'A'},
+        {'B', 'B'},
+        {'C', 'C'},
+        {'D', 'D'},
+        {'E', 'E'},
+        {'F', 'F'},
+        {'G', 'G'},
+        {'H', 'H'},
+        {'I', 'I'},
+        {'J', 'J'},
+        {'K', 'K'},
+        {'L', 'L'},
+        {'M', 'M'},
+        {'N', 'N'},
+        {'O', 'O'},
+        {'P', 'P'},
+        {'Q', 'Q'},
+        {'R', 'R'},
+        {'S', 'S'},
+        {'T', 'T'},
+        {'U', 'U'},
+        {'V', 'V'},
+        {'W', 'W'},
+        {'X', 'X'},
+        {'Y', 'Y'},
+        {'Z', 'Z'},
     };
+    std::shuffle(std::begin(m), std::end(m), g);
     auto t1 = pystring::maketrans(m);
     std::string s1 = pystring::translate(cipher_text, t1);
     std::cout << s1 <<  std::endl;
+#endif
     return 0;
 }
