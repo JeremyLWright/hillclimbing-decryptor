@@ -95,6 +95,8 @@ struct cipher {
 };
 std::random_device rd;
 std::mt19937 g(rd());
+std::ifstream fin("../quadgrams.txt");
+ngram_score fitness(fin);
 
 std::string substitute(std::string text, std::string key)
 {
@@ -103,17 +105,15 @@ std::string substitute(std::string text, std::string key)
 }
 
 
-cipher break_substitution(std::string cipher_text)
+cipher break_substitution(std::string cipher_text, std::string skey)
 {
     std::transform(std::begin(cipher_text), std::end(cipher_text), std::begin(cipher_text), ::toupper);
     std::uniform_int_distribution<int> distribution(0,25); 
-    std::ifstream fin("../quadgrams.txt");
-    ngram_score fitness(fin);
     
     cipher p;
-    p.key = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    p.score = fitness.score(substitute(cipher_text, p.key));
-    p.plaintext = cipher_text;
+    p.key = skey;
+    p.plaintext = substitute(cipher_text, p.key);
+    p.score = fitness.score(p.plaintext); 
     for(size_t i = 0; i < 1000; ++i)
     {
         cipher c(p);
@@ -139,10 +139,10 @@ int main(int argc, const char *argv[])
             std::istreambuf_iterator<char>());
     cipher best;
     best.score = -99e99;
-
+    best.key = "";
     for(size_t i = 0; 1 ; ++i)
     {
-        auto c = break_substitution(cipher_text);
+        auto c = break_substitution(cipher_text, "QWERTYUIOPASDFGHJKLZXCVBNM");
         if(c.score > best.score)
         {
             best = c;
