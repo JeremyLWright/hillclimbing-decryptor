@@ -19,11 +19,11 @@ EVEN THE KEYBOARD YOU ARE USING TO DECRYPT THIS MESSAGE SHOULD BE A VARIANT OF Q
 UNLESS YOU HAVE BUILT YOUR OWN QWERTY IS THE NEW ABCD
 
 Solution:
-Initially I used basic frequency analysis to work out some possible keys. This
+Initially, I used basic frequency analysis to work out some possible keys. This
 resulted in very little.
 
-Next I applied the pattern of hill-climbing from CSE471. Using a C++
-program I used a dictionary of ngrams to evaluate fitness. The basic algorithm
+Next I applied the pattern of hill-climbing from CSE471 using a C++
+program and a dictionary of ngrams to evaluate fitness. The basic algorithm
 is as follows:
 
 1. Generate a random key.
@@ -36,5 +36,3 @@ is as follows:
 5. If the parent score is greater than the child score, then there is no
    improvement. Stop this branch. Otherwise if the child score is greater, this
    is an improvement. Update the parent key, with this key, and continue.
-
-
